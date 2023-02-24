@@ -24,7 +24,6 @@ class UpdateUserAvatarService {
     if (user.avatar) {
       const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
       const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
-
       if (userAvatarFileExists) {
         await fs.promises.unlink(userAvatarFilePath);
       }
@@ -33,7 +32,6 @@ class UpdateUserAvatarService {
     user.avatar = avatarFileName;
 
     await userRepository.save(user);
-
     return user;
   }
 }
