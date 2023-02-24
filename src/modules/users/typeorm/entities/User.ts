@@ -40,7 +40,7 @@ class User {
     if (!this.avatar) {
       return null;
     }
-    return `${process.env.APP_API_URL}/uploads/${this.avatar}`;
+    return `${process.env.APP_API_URL}/files/${this.avatar}`;
   }
 }
 
