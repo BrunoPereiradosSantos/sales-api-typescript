@@ -5,9 +5,9 @@
   "password": "docker",
   "username": "postgres",
   "database": "apivendas",
-  "migrations": ["./dist/shared/typeorm/migrations/*.js"],
-  "entities": ["./dist/modules/**/typeorm/entities/*.js"],
+  "migrations": ["./dist/shared/infra/typeorm/migrations/*.js"],
+  "entities": ["./dist/modules/**/infra/typeorm/entities/*.js"],
   "cli": {
-    "migrationsDir": "./dist/shared/typeorm/migrations"
+    "migrationsDir": "./dist/shared/infra/typeorm/migrations"
   }
 }
