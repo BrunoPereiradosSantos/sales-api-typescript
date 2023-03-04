@@ -1,5 +1,10 @@
 import { ICreateCustomer } from '@modules/customers/domain/models/ICreateCustomer';
-import { ICustomersRepository } from '@modules/customers/domain/repositories/ICustomersRepository';
+import { ICustomer } from '@modules/customers/domain/models/ICustomer';
+import { ICustomerPaginate } from '@modules/customers/domain/models/ICustomerPaginate';
+import {
+  ICustomersRepository,
+  SearchParams,
+} from '@modules/customers/domain/repositories/ICustomersRepository';
 import { getRepository, Repository } from 'typeorm';
 import Customer from '../entities/Customer';
 
@@ -8,6 +13,27 @@ class CustomersRepository implements ICustomersRepository {
 
   constructor() {
     this.ormRepository = getRepository(Customer);
+  }
+
+  public async findAll({
+    page,
+    skip,
+    take,
+  }: SearchParams): Promise<ICustomerPaginate> {
+    const [customers, count] = await this.ormRepository
+      .createQueryBuilder()
+      .skip(skip)
+      .take(take)
+      .getManyAndCount();
+
+    const result = {
+      per_page: take,
+      total: count,
+      current_page: page,
+      data: customers,
+    };
+
+    return result;
   }
 
   public async create({ name, email }: ICreateCustomer): Promise<Customer> {
@@ -49,6 +75,10 @@ class CustomersRepository implements ICustomersRepository {
     });
 
     return customer;
+  }
+
+  public async remove(customer: ICustomer): Promise<void> {
+    await this.ormRepository.remove(customer);
   }
 }
 
