@@ -8,11 +8,12 @@ import {
 
 import { Exclude, Expose } from 'class-transformer';
 import dotenv from 'dotenv';
+import { IUser } from '@modules/users/domain/models/IUser';
 
 dotenv.config();
 
 @Entity('users')
-class User {
+class User implements IUser {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -6,23 +6,25 @@ import EtherealMail from '@config/mail/EtherealMail';
 import SesMail from '@config/mail/SesMail';
 import mailConfig from '@config/mail/mail';
 import path from 'path';
+import { ISendForgotPasswordEmail } from '../domain/models/ISendForgotPasswordEmail';
+import { inject, injectable } from 'tsyringe';
 
-interface IRequest {
-  email: string;
-}
-
+@injectable()
 class SendForgotPasswordEmailService {
-  public async execute({ email }: IRequest): Promise<void> {
-    const userRepository = getCustomRepository(UsersRepository);
-    const userTokenRepository = getCustomRepository(UserTokensRepository);
+  constructor(
+    @inject('UsersRepository') private usersRepository: UsersRepository,
+    @inject('UserTokensRepository')
+    private userTokensRepository: UserTokensRepository,
+  ) {}
 
-    const user = await userRepository.findByEmail(email);
+  public async execute({ email }: ISendForgotPasswordEmail): Promise<void> {
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('User does not exists');
     }
 
-    const { token } = await userTokenRepository.generate(user.id);
+    const { token } = await this.userTokensRepository.generate(user.id);
     const forgotPasswordTemplate = path.resolve(
       __dirname,
       '..',

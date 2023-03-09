@@ -5,17 +5,21 @@ import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
 import uploadConfig from '@config/upload';
 import DiskStorageProvider from '@shared/providers/StorageProvider/DiskStorageProvider';
 import S3StorageProvider from '@shared/providers/StorageProvider/S3StorageProvider';
+import { inject, injectable } from 'tsyringe';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IUpdateUserAvatar } from '../domain/models/IUpdateUserAvatar';
 
-interface IRequest {
-  userId: string;
-  avatarFileName: string;
-}
-
+@injectable()
 class UpdateUserAvatarService {
-  public async execute({ userId, avatarFileName }: IRequest): Promise<User> {
-    const userRepository = getCustomRepository(UsersRepository);
-
-    const user = await userRepository.findById(userId);
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
+  public async execute({
+    user_id,
+    avatarFilename,
+  }: IUpdateUserAvatar): Promise<User> {
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError('User not found');
@@ -27,7 +31,7 @@ class UpdateUserAvatarService {
         await s3Provider.deleteFile(user.avatar);
       }
 
-      const fileName = await s3Provider.saveFile(avatarFileName);
+      const fileName = await s3Provider.saveFile(avatarFilename);
       user.avatar = fileName;
     } else {
       const diskProvider = new DiskStorageProvider();
@@ -35,11 +39,11 @@ class UpdateUserAvatarService {
         await diskProvider.deleteFile(user.avatar);
       }
 
-      const fileName = await diskProvider.saveFile(avatarFileName);
+      const fileName = await diskProvider.saveFile(avatarFilename);
       user.avatar = fileName;
     }
 
-    await userRepository.save(user);
+    await this.usersRepository.save(user);
     return user;
   }
 }
