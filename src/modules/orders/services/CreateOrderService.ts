@@ -1,22 +1,22 @@
-import CustomersRepository from '@modules/customers/infra/typeorm/repositories/CustomersRepository';
-import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
+import { ICustomersRepository } from '@modules/customers/domain/repositories/ICustomersRepository';
+import { IProductsRepository } from '@modules/products/domain/repositories/IProductsRepository';
 import AppError from '@shared/errors/AppError';
 import { inject, injectable } from 'tsyringe';
 import { IOrder } from '../domain/models/IOrder';
 import { IRequestCreateOrder } from '../domain/models/IRequestCreateOrder';
-import OrdersRepository from '../infra/typeorm/repositories/OrdersRepository';
+import { IOrdersRepository } from '../domain/repositories/IOrdersRepository';
 
 @injectable()
 class CreateOrderService {
   constructor(
     @inject('OrdersRepository')
-    private ordersRepository: OrdersRepository,
+    private ordersRepository: IOrdersRepository,
 
     @inject('CustomersRepository')
-    private customersRepository: CustomersRepository,
+    private customersRepository: ICustomersRepository,
 
     @inject('ProductsRepository')
-    private productsRepository: ProductsRepository,
+    private productsRepository: IProductsRepository,
   ) {}
   public async execute({
     customer_id,

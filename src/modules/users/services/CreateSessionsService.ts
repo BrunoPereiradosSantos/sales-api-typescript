@@ -2,15 +2,15 @@ import AppError from '@shared/errors/AppError';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import authConfig from '@config/auth';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
 import { ICreateSession } from '../domain/models/iCreateSession';
 import { IUserAuthenticated } from '../domain/models/IUserAuthenticated';
 import { inject, injectable } from 'tsyringe';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
 
 @injectable()
 class CreateSessionsService {
   constructor(
-    @inject('UsersRepository') private usersRepository: UsersRepository,
+    @inject('UsersRepository') private usersRepository: IUsersRepository,
   ) {}
   public async execute({
     email,

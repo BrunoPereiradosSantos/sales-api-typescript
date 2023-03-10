@@ -3,12 +3,12 @@ import { hash } from 'bcryptjs';
 import { inject, injectable } from 'tsyringe';
 import { ICreateUser } from '../domain/models/ICreateUser';
 import { IUser } from '../domain/models/IUser';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
 
 @injectable()
 class CreateUserService {
   constructor(
-    @inject('UsersRepository') private usersRepository: UsersRepository,
+    @inject('UsersRepository') private usersRepository: IUsersRepository,
   ) {}
   public async execute({ name, email, password }: ICreateUser): Promise<IUser> {
     const emailExists = await this.usersRepository.findByEmail(email);

@@ -1,20 +1,19 @@
 import AppError from '@shared/errors/AppError';
-import { getCustomRepository } from 'typeorm';
 import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
-import UserTokensRepository from '../infra/typeorm/repositories/UserTokensRepository';
 import EtherealMail from '@config/mail/EtherealMail';
 import SesMail from '@config/mail/SesMail';
 import mailConfig from '@config/mail/mail';
 import path from 'path';
 import { ISendForgotPasswordEmail } from '../domain/models/ISendForgotPasswordEmail';
 import { inject, injectable } from 'tsyringe';
+import { IUserTokensRepository } from '../domain/repositories/iUserTokensRepository';
 
 @injectable()
 class SendForgotPasswordEmailService {
   constructor(
     @inject('UsersRepository') private usersRepository: UsersRepository,
     @inject('UserTokensRepository')
-    private userTokensRepository: UserTokensRepository,
+    private userTokensRepository: IUserTokensRepository,
   ) {}
 
   public async execute({ email }: ISendForgotPasswordEmail): Promise<void> {
